@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import App from './App';
 
-class ImageUpload extends React.Component {
+class ImageUploader extends React.Component {
   render() {
     return (
       <App />
@@ -13,4 +13,4 @@ class ImageUpload extends React.Component {
   }
 }
 
-AppRegistry.registerComponent('ImageUpload', () => ImageUpload);
+AppRegistry.registerComponent('ImageUploader', () => ImageUploader);

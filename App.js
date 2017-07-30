@@ -122,3 +122,5 @@ export default class App extends React.Component {
   }
 }
 
+// TODO
+// Image picker dependencies for iOS
