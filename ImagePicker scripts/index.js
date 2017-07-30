@@ -14,4 +14,3 @@ class ImageUpload extends React.Component {
 }
 
 AppRegistry.registerComponent('ImageUpload', () => ImageUpload);
-
