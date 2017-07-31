@@ -7,6 +7,6 @@
     "extends": "airbnb",
     "rules": {
       "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-	eslint no-console: ["error", { allow: ["warn", "error", "log"] }],
+      "no-console": "off",
     }
 }
