@@ -15,8 +15,9 @@ export default class App extends React.Component {
   state = {
     avatarSource: null,
     videoSource: null,
+    fileName: null,
   };
-  // Image tapped
+  // Image upload
   selectPhotoTapped() {
     const options = {
       quality: 1.0,
@@ -26,7 +27,7 @@ export default class App extends React.Component {
         skipBackup: true,
       },
     };
-
+    // ImagePicker
     ImagePicker.showImagePicker(options, (response) => {
       console.log('Response = ', response);
 
@@ -37,43 +38,37 @@ export default class App extends React.Component {
       } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
+        // Change state "avaterSource" to file uri
         const source = { uri: response.uri };
-        // fetch needs the source as a string, "source" is counted as an object
-        const sourceAsString = JSON.stringify(source);
-
-        // You can also display the image using data:
-        // let source = { uri: 'data:image/jpeg;base64,' + response.data };
-
-        // Change state to uri
         this.setState({
           avatarSource: source,
         });
-        console.log('State set.');
-
+        // fetch needs the source as a string, "source" is an object
+        const sourceAsString = source.uri.toString();
+        console.log('Source URI is: ', sourceAsString);
+        const fileName = sourceAsString.split('/').pop();
+        console.log('The cut filename is: ', fileName);
         // Creating new FormData
         const data = new FormData();
-
-        console.log('Source URI is: ', sourceAsString);
         data.append('data', {
-          uri: 'file:///storage/emulated/0/Android/data/com.imageuploader/files/Pictures/image-e526b6a1-65d8-4ab7-8f39-5520976a7112.jpg',
-          type: 'image/jpeg', // or photo.type
-          name: 'datei.jpeg',
+          uri: sourceAsString,
+          type: 'image/jpeg',
+          name: fileName,
         });
-        data.append('name', 'testName'); // you can append anyone.
-
-        // fetch to url
+        data.append('name', 'testName');
+        // fetch "post"
         fetch('http://hendrikhausen.com/hidden/phpupload/upload.php', {
           method: 'post',
           body: data,
         }).then((res) => {
           console.log(res);
         }).catch((error) => {
-          console.log('Network error is: ', error);
+          console.log('An error occured during networking: ', error);
         });
       }
     });
   }
-  // Video tapped
+  // Video upload
   selectVideoTapped() {
     const options = {
       title: 'Video Picker',
@@ -81,7 +76,7 @@ export default class App extends React.Component {
       mediaType: 'video',
       videoQuality: 'medium',
     };
-
+    // VideoPicker
     ImagePicker.showImagePicker(options, (response) => {
       console.log('Response = ', response);
 
@@ -92,9 +87,38 @@ export default class App extends React.Component {
       } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
-         // Change state to uri
+
+         // Change state videoSource to file uri
+        const source = { uri: response.uri };
+        const path = { path: response.path };
+        console.log('Source= ', source);
         this.setState({
           videoSource: response.uri,
+        });
+
+        // fetch needs the source as a string, "source" is an object
+        const sourceAsString = source.uri.toString();
+        console.log('Source URI is: ', sourceAsString);
+
+        const fileName = path.path.toString().split('/').pop();
+        console.log('The cut filename is: ', fileName);
+
+        // Creating new FormData
+        const data = new FormData();
+        data.append('data', {
+          uri: sourceAsString,
+          type: 'video/mp4',
+          name: fileName,
+        });
+        data.append('name', 'testName');
+        // fetch "post"
+        fetch('http://hendrikhausen.com/hidden/phpupload/upload.php', {
+          method: 'post',
+          body: data,
+        }).then((res) => {
+          console.log(res);
+        }).catch((error) => {
+          console.log('An error occured during networking: ', error);
         });
       }
     });
@@ -127,7 +151,7 @@ export default class App extends React.Component {
         <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)}>
           <View style={[styles.avatar, styles.avatarContainer, { marginBottom: 20 }]}>
             { this.state.avatarSource === null ? <Text>Select a Photo</Text> :
-            <Image style={styles.avatar} source={{ uri: 'file:///storage/emulated/0/Android/data/com.imageuploader/files/Pictures/image-e526b6a1-65d8-4ab7-8f39-5520976a7112.jpg' }} />
+            <Image style={styles.avatar} source={this.state.avatarSource} />
             }
           </View>
         </TouchableOpacity>
