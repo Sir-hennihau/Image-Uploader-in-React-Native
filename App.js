@@ -236,6 +236,11 @@ export default class App extends React.Component {
           </TouchableOpacity>
 
           <Text>Hint: The video preview only shows the video uri yet. </Text>
+          <Text>Hint 2: Maximum supported filesize in upload.php is set to 100 Mb
+           (feel free to change that or delte this rule).
+           No error is displayed yet, if the filesize exceeds that size. Upload will finish
+           without error, but file doesnt appear on server. Going to be fixed someday.
+            Probably needs base64 implementation. </Text>
 
         </View>
       </ScrollView>
