@@ -14,18 +14,23 @@ import ImagePicker from 'react-native-image-picker';
 
 // ---FYI---
 
-// Replace the API URI in the 2 different fetch methods with your own API URI
+// Replace the API URI in the fetch methods of both image and video with your own API URI
+
 // Repo includes an example server API "./API/upload.php", feel free to use your own one though
 // If you use my "upload.php", go check the FYI included in "upload.php"
 
-// Tested only on Android yet, contact me if you need iOS support
+// Tested only on Android yet, iOS support will follow later on, pm me if needed
 
 export default class App extends React.Component {
-  // States are the file URIs, used for previews in render()
-  state = {
-    avatarSource: null,
-    videoSource: null,
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      avatarSource: null,
+      videoSource: null,
+      uploadState: 'No upload currently active.',
+    };
+  }
+
 
   // ---Image upload---
   // Options passed to ImagePicker.showImagePicker
@@ -38,10 +43,9 @@ export default class App extends React.Component {
         skipBackup: true,
       },
     };
-
     // ImagePicker invoked, picking an image
     ImagePicker.showImagePicker(options, (response) => {
-      // Logging various errors/ cancels
+      // Logging various errors/ cancels for the ImagePicker
       console.log('ImagePicker response: ', response);
       if (response.didCancel) {
         console.log('User cancelled ImagePicker');
@@ -76,10 +80,27 @@ export default class App extends React.Component {
         fetch('http://hendrikhausen.com/hidden/phpupload/upload.php', {
           method: 'post',
           body: data,
-        })
-        // Logging HTTP response
+        },
+        this.setState({
+          uploadState: 'Uploading... please be patient.',
+        }),
+        )
+        // Checking the HTTP response and adjusting uploadState
         .then((res) => {
           console.log(res);
+          if (res.status === 200) {
+            this.setState({
+              uploadState: 'Upload finished.',
+            });
+          } else {
+            const responseStatusString = res.status.toString();
+            console.log('responseStatusString: ', responseStatusString);
+            const networkError = 'An error occured during uploading, errorcode: ' + responseStatusString;
+            console.log('networkError: ', networkError);
+            this.setState({
+              uploadState: networkError,
+            });
+          }
         })
         // Logging any networking errors
         .catch((error) => {
@@ -141,10 +162,26 @@ export default class App extends React.Component {
         fetch('http://hendrikhausen.com/hidden/phpupload/upload.php', {
           method: 'post',
           body: data,
-        })
-        // Logging HTTP response
+        },
+        this.setState({
+          uploadState: 'Uploading... please be patient.',
+        }))
+        // Checking the HTTP response and adjusting uploadState
         .then((res) => {
           console.log(res);
+          if (res.status === 200) {
+            this.setState({
+              uploadState: 'Upload finished.',
+            });
+          } else {
+            const responseStatusString = res.status.toString();
+            console.log('responseStatusString: ', responseStatusString);
+            const networkError = 'An error occured during uploading, errorcode: ' + responseStatusString;
+            console.log('networkError: ', networkError);
+            this.setState({
+              uploadState: networkError,
+            });
+          }
         })
         // Logging any networking errors
         .catch((error) => {
@@ -187,6 +224,7 @@ export default class App extends React.Component {
               }
             </View>
           </TouchableOpacity>
+          <Text>{this.state.uploadState}</Text>
 
           <TouchableOpacity onPress={this.selectVideoTapped.bind(this)}>
             <View style={[styles.avatar, styles.avatarContainer]}>
@@ -197,9 +235,7 @@ export default class App extends React.Component {
             </View>
           </TouchableOpacity>
 
-          <Text>For video, only the selected videoSource/ URI is shown. For a video preview an
-           implementation of the external VideoView library would be needed. Would be to much
-           for this example.</Text>
+          <Text>Hint: The video preview only shows the video uri yet. </Text>
 
         </View>
       </ScrollView>

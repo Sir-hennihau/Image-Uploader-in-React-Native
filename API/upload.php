@@ -8,7 +8,7 @@
 // for an example index.html to test this script and a simplified version of this script.
 
 $upload_folder = 'upload/'; // Your upload folder
-$max_size = 10000000; // = 10 Mb
+$max_size = 100000000; // = 100 Mb
 $allowed_extensions = array('png', 'jpg', 'jpeg', 'gif', 'mp4', 'gp3', 'webm');
 
 // Get filename
