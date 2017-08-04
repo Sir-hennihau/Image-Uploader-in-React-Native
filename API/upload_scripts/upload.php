@@ -1,13 +1,10 @@
 <?php
 // ---FYI---
 
-// Create an upload folder "./upload"
-// Control and set your own values for allowed_extensions, max_size
+// Set your own values for $upload_folder, $max_size, $allowed_extensions
 
-// Check my Simple-PHP-Upload repo (https://github.com/Sir-hennihau/simple-php-upload)
-// for an example index.html to test this script and a simplified version of this script.
 
-$upload_folder = 'upload/'; // Your upload folder
+$upload_folder = 'uploads/'; // Your upload folder
 $max_size = 100000000; // = 100 Mb
 $allowed_extensions = array('png', 'jpg', 'jpeg', 'gif', 'mp4', 'gp3', 'webm');
 

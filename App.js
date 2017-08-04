@@ -75,9 +75,9 @@ export default class App extends React.Component {
           type: 'image/jpeg',
           name: fileName,
         });
-        // fetch "post"
+        // fetch "post", upload the image
         // replace below once with your own API URI
-        fetch('http://hendrikhausen.com/hidden/phpupload/upload.php', {
+        fetch('http://hendrikhausen.com/hidden/next/upload_scripts/upload.php', {
           method: 'post',
           body: data,
         },
@@ -105,6 +105,21 @@ export default class App extends React.Component {
         // Logging any networking errors
         .catch((error) => {
           console.log('An error occured during networking: ', error);
+        });
+        // Create a DB entry for the image
+        const dbData = new FormData();
+        dbData.append(
+          'fileName': fileName,
+        );
+
+        // fetch 'post', send DB data
+        fetch('http://hendrikhausen.com/hidden/next/database_scripts/createDatabaseEntry.php', {
+          method: 'post',
+          body: dbData,
+        }).then((res) => {
+          console.log('Database response: ', res);
+        }).catch((error) => {
+          console.log('DB error: ', error);
         });
       }
     });
@@ -157,9 +172,9 @@ export default class App extends React.Component {
           type: 'video/mp4',
           name: fileName,
         });
-        // fetch "post"
+        // fetch "post", upload the video
         // replace below once with your own API URI
-        fetch('http://hendrikhausen.com/hidden/phpupload/upload.php', {
+        fetch('http://hendrikhausen.com/hidden/next/upload_scripts/upload.php', {
           method: 'post',
           body: data,
         },
