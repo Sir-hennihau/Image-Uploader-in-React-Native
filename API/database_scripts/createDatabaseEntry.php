@@ -13,7 +13,7 @@ $date = $dateInfo['mday'];
 
 $uploadDate = "$year-$month-$date";
 /* Attempt MySQL server connection. Assuming you are running MySQL
-server with default setting (user 'root' with no password) */
+server with default setting (user 'root' and password) */
 ini_set('display_errors', 1);
 $link = mysqli_connect('localhost', 'root', 'asd123ASD!', 'next');
 

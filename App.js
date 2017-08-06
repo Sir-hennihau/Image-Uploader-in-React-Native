@@ -28,6 +28,7 @@ export default class App extends React.Component {
       avatarSource: null,
       videoSource: null,
       uploadState: 'No upload currently active.',
+      databaseEntryState: null,
     };
   }
 
@@ -68,17 +69,17 @@ export default class App extends React.Component {
         const fileName = sourceAsString.split('/').pop();
         console.log('filename = ', fileName);
 
-        // Creating new FormData
+        // Creating new FormData for the image upload
         const data = new FormData();
         data.append('data', {
           uri: sourceAsString,
           type: 'image/jpeg',
           name: fileName,
         });
-        // fetch "post", upload the image
+        // fetch "POST", upload the image
         // replace below once with your own API URI
         fetch('http://hendrikhausen.com/hidden/next/upload_scripts/upload.php', {
-          method: 'post',
+          method: 'POST',
           body: data,
         },
         this.setState({
@@ -106,19 +107,35 @@ export default class App extends React.Component {
         .catch((error) => {
           console.log('An error occured during networking: ', error);
         });
+
         // Create a DB entry for the image
         const dbData = new FormData();
         dbData.append(
-          'fileName': fileName,
+          'fileName', fileName,
+        );
+        dbData.append(
+          'uploaderID', '1',
+        );
+        dbData.append(
+          'fileType', 'image',
         );
 
-        // fetch 'post', send DB data
+
+        // fetch 'POST', send image DB data
         fetch('http://hendrikhausen.com/hidden/next/database_scripts/createDatabaseEntry.php', {
-          method: 'post',
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          method: 'POST',
           body: dbData,
-        }).then((res) => {
-          console.log('Database response: ', res);
-        }).catch((error) => {
+        }).then(res => res.text())
+        .then(text => {
+          console.log('Database response: ', text);
+          this.setState({
+            databaseEntryState: text,
+          });
+        })
+        .catch((error) => {
           console.log('DB error: ', error);
         });
       }
@@ -165,17 +182,17 @@ export default class App extends React.Component {
         const fileName = path.path.toString().split('/').pop();
         console.log('The cut filename is: ', fileName);
 
-        // Creating new FormData
+        // Creating new FormData for the video upload
         const data = new FormData();
         data.append('data', {
           uri: sourceAsString,
           type: 'video/mp4',
           name: fileName,
         });
-        // fetch "post", upload the video
+        // fetch "POST", upload the video
         // replace below once with your own API URI
         fetch('http://hendrikhausen.com/hidden/next/upload_scripts/upload.php', {
-          method: 'post',
+          method: 'POST',
           body: data,
         },
         this.setState({
@@ -201,6 +218,37 @@ export default class App extends React.Component {
         // Logging any networking errors
         .catch((error) => {
           console.log('An error occured during networking: ', error);
+        });
+
+        // Create a DB entry for the image
+        const dbData = new FormData();
+        dbData.append(
+          'fileName', fileName,
+        );
+        dbData.append(
+          'uploaderID', '1',
+        );
+        dbData.append(
+          'fileType', 'video',
+        );
+
+
+        // fetch 'POST', send image DB data
+        fetch('http://hendrikhausen.com/hidden/next/database_scripts/createDatabaseEntry.php', {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          method: 'POST',
+          body: dbData,
+        }).then(res => res.text())
+        .then(text => {
+          console.log('Database response: ', text);
+          this.setState({
+            databaseEntryState: text,
+          });
+        })
+        .catch((error) => {
+          console.log('DB error: ', error);
         });
       }
     });
@@ -240,6 +288,7 @@ export default class App extends React.Component {
             </View>
           </TouchableOpacity>
           <Text>{this.state.uploadState}</Text>
+          <Text>{this.state.databaseEntryState}</Text>
 
           <TouchableOpacity onPress={this.selectVideoTapped.bind(this)}>
             <View style={[styles.avatar, styles.avatarContainer]}>
